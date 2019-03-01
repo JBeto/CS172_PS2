@@ -8,6 +8,7 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 
 ps = PorterStemmer()
 
+
 def get_tf(term_frequency, total_terms):
     return term_frequency / float(total_terms)
 
