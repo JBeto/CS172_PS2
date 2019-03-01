@@ -1,4 +1,4 @@
-from src.tf_idf import DocIndex, get_tf, get_idf, get_tf_idf
+from tf_idf import DocIndex, get_tf, get_idf, get_tf_idf
 
 
 def test():

@@ -19,6 +19,7 @@ def get_tf_idf(tf, idf):
 
 class Posting:
     __slots__ = ['doc_id', 'frequency']
+
     def __init__(self, doc_id, frequency):
         self.doc_id = doc_id
         self.frequency = frequency
