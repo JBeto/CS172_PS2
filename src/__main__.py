@@ -1,24 +1,25 @@
-from tf_idf import DocIndex, get_tf, get_idf, get_tf_idf
+from search import DocIndex
+from pathlib import Path
 
 
-def test():
-    doc_index = DocIndex('data', 'stoplist.txt')
-    term = input('Enter a term: ')
-    while term != 'QUIT':
-        if term not in doc_index.posting_index:
-            print("Term does not exists in index.")
-        else:
-            docs_appeared = len(doc_index.posting_index[term])
-            for posting in doc_index.posting_index[term]:
-                tf = get_tf(posting.frequency, doc_index.doc_id_index[posting.doc_id])
-                idf = get_idf(doc_index.get_total_documents(), docs_appeared)
-                tf_idf = get_tf_idf(tf, idf)
+def run_queries():
+    n = 100
+    doc_index = DocIndex(Path('data') / 'ap89_collection', 'stoplist.txt')
+    with open(Path('data') / 'query_list.txt', 'r') as f:
+        for query_line in f.readlines():
+            period_index = query_line.find('.')
+            query_number = query_line[:period_index]
+            query = query_line[period_index+1:]
+            results = doc_index.query(query, n)
 
-                print(tf, end=',')
-                print(idf, end=',')
-                print(tf_idf)
-        term = input('Enter a term: ')
+            # output
+            for i in range(n):
+                print('{query_no} Q0 {docno} {rank} {score} Exp'.format(
+                    query_no=query_number,
+                    docno=results[i][1],
+                    rank=i+1,
+                    score=results[i][0]))
 
 
 if __name__ == '__main__':
-    test()
+    run_queries()
