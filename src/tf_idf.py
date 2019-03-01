@@ -3,7 +3,10 @@ import re
 import math
 from collections import defaultdict, Counter
 from pathlib import Path
+from nltk.stem import PorterStemmer
+from nltk.tokenize import sent_tokenize, word_tokenize
 
+ps = PorterStemmer()
 
 def get_tf(term_frequency, total_terms):
     return term_frequency / float(total_terms)
@@ -24,14 +27,17 @@ class Posting:
         self.frequency = frequency
 
 
-def _get_unique_terms(words_file):
+def _get_stop_words(words_file):
     with open(words_file) as f:
         return set([x.lower() for x in re.sub('[!#?,.:";-]', '', f.read()).split()])
 
 
 def _get_terms(words_file, stop_words):
     with open(words_file) as f:
+        # filter for stop words and punctuation
         terms = [x.lower() for x in re.sub('[!#?,.:";-]', '', f.read()).split() if x not in stop_words]
+        # apply stemming
+        terms = [ps.stem(t) for t in terms]
         return dict(Counter(terms))
 
 
@@ -40,7 +46,7 @@ class DocIndex:
         self.posting_index = defaultdict(list)
         self.doc_id_index = {}
 
-        stop_words = _get_unique_terms(stop_words_file)
+        stop_words = _get_stop_words(stop_words_file)
 
         doc_id = 1
         for f in sorted([f for f in os.listdir(input_directory)]):
